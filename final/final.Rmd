@@ -1,0 +1,452 @@
+---
+title: "Titanik Felaketinde Kim, Neden Hayatta Kaldı?"
+author: 
+  - Merve SERTBAKAN[^1]
+bibliography: ../bibliography/biblio.bib
+csl: ../csl/apa-tr.csl
+header-includes:
+  - \usepackage{polyglossia}
+  - \setmainlanguage{turkish}
+  - \usepackage{booktabs}
+  - \usepackage{caption} 
+  - \captionsetup[table]{skip=10pt}
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    keep_tex: no
+    latex_engine: xelatex
+    number_sections: yes
+    toc: no
+geometry: margin=1in
+link-citations: yes
+urlcolor: blue
+fontsize: 12pt
+biblio-style: apalike
+abstract: |
+  Dünya tarihinde önemli bir yeri olan Titanik felaketi, yapımını üstlenen White Star Line Şirketi tarafından *batmaz/batırılamaz* olduğunu vurgulanan bir geminin, çıktığı ilk yolculuğu dahi tamamlayamadan bir buzdağıyla çarpışması sonucu Kuzey Atlantik Okyanusunda batması ve binlerce kişinin ölümüne yol açması sebebiyle araştırmacılar arasında güncelliğini korumakta ve farklı istatistiksel analizlere konu olmaktadır. Titanik yolcularının sahip oldukları niteliklerin hayatta kalmalarıyla anlamlı istatistiksel ilişkilerinin var olup olmadığının, varsa ne tür bir ilişkinin söz konusu olduğun tespiti bu çalışmanın konusunu oluşturmaktadır. Bu bağlamda yolcuların yaş ve cinsiyet değişkenleri ile ekonomik durumlarını temsil eden yolcu sınıfı ve bilet fiyatı değişkenleri incelenerek nitelik ve niceliklerine uygun olacak şekilde uygulanan istatiksel testler ve yapılan gruplandırmalar ve grafiksel gösterimler ışığında söz konusu değişkenlerin yolcuların hayatta kalmaları üzerindeki etkileri saptanmıştır. Yaş değişkenine uygulanan *"Shapiro-Wilk"* testi ile değişkenin normal dağılıma uygunluğu tespit edilmiş, *"t-testi"* ve *"Anova"* testi ile hayatta kalma durumuyla aralarında istatistiksel olarak anlamlı bir ilişki olduğu, *"korelasyon"* ve *"kovaryans"* testleri ile bu ilişkinin ters yönlü ve zayıf olduğu gözlemlenmiştir. Cinsiyet değişkenine uygulanan *"t-testi"* ile *"ki-kare"* testi sonucunda istatistiksel olarak kadınlarla erkeklerin hayatta kalma oranları arasında anlamlı bir fark olduğu, cinsiyetin etkisinin yolcuların hayatta kalmaları üzerinde belirleyici olduğu tespit edilmiştir. Bilet fiyatı ile yolcu değişkeni arasındaki ilişkinin gözlemlenebilmesi için yapılan *"korelasyon"* ve *"kovaryans"* testleri ile ters yönlü zayıf bir ilişki ve 1.sınıftan 3.sınıfa doğru gidildikçe bilet fiyatlarında doğrusal bir azalma söz konusu olduğu, *“Kruskal Wallis”* testi ile bağımsız iki değişken arasında anlamlı bir istatistiksel ilişki olduğu belirlenmiştir. Yolcu sınıfı değişkenine uygulanan *"ki-kare"* ve *"Fisher"* testleri ile bu değişkenin yolcuların hayatta kalmaları arasında anlamlı bir istatistiksel ilişki bulunmadığı gözlemlenmekle birlikte bu değişkene ilişkin olarak veri setindeki gözlem yetersizliği sebebiyle ekonomik durumun yolcuların hayatta kalmaları üzerinde nasıl bir etkisi olduğuna dair herhangi bir sonuca varılamamıştır. Son olarak yapılan *"Regresyon Analizi"* ile yaş ve cinsiyet değişkenlerinin hayatta kalma durumu üzerinde anlamlı etkiye sahip olduğu, modelin bağımsız değişkenlere iyi uyum sağlayarak verilerdeki değişkenleri açıklamada etkili olduğu görülmüştür.
+  
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+<!-- ======================================================================= -->
+<!-- ============================== NOTLAR ================================= -->
+<!-- ======================================================================= -->
+[^1]: 21080802, [Github Repo](https://github.com/S-Merve/final_sinavi.git)
+
+# Giriş
+White Star Line Şirketi tarafından 1909 yılında yapımına başlanan, döneminin en büyük buharlı yolcu gemisi olma özelliğini taşıyan _RMS Titanik_, 1912 yılında inşasının tamamlanmasının ardından 2000'in üzerinde yolcu ve mürettebat ile Southampton/Birleşik Krallık'tan demir alarak New York City/Amerika Birleşik Devletleri'ne gitmek üzere 10 Nisan 1912 tarihinde ilk seferine çıkmıştır.[@varmer2006rms] Ancak Titanik 15 Nisan 1912'de, ilk seferinin 4. gününde, bir buzdağına çarparak 2 saat 40 dakika içerisinde Kuzey Atlantik Okyanusunun buzlu sularına gömülmüştür.[@frey2009surviving] Her ne kadar Şirket, İngiliz bayraklı bu dev transatlantik yolcu gemisinin, dönemin en gelişmiş teknolojilerine ve oldukça deneyimli bir mürettebata sahip kılındığından, "*batmaz/batırılamaz*" olduğuna ilişkin oldukça iddialı bir güven vermekten kaçınmamışsa da [@frey2011perished] batmayacağına inanılan bu devasa gemi henüz ilk seferini bile tamamlamamışken bir buzdağına çarparak batmıştır. Günümüzden tam 111 yıl önce yaşanan ve binlerce kişinin, gemide bulunan mürettebat dahil tüm yolcuların 2/3'sinden fazla, hayatını kaybetmesine neden olan Titanik felaketi tarihteki en trajik ve en ünlü felaketlerden biridir.[@frey2011perished] 3000'e yakın kapasitesi olan bir gemide 2000'den az sayıda filika olması ve yaşanan panik ile birlikte bu filikaların da verimsiz kullanılması felaketin böyle büyük ve ölümcül olmasına sebep olmuştur.[@kakde2018predicting]
+
+## Çalışmanın Amacı
+Bu çalışmada Titanik gemisinden sağ kurtulmayı başarabilen yolcuların ortak ve ayrışan niteliklerine göre sağ kurtulma olasılıkları üzerinde durularak hangi değişkenlerin yolcuların hayatta kalmaları üzerinde nasıl etkili oldukları analiz edilecektir. Çalışmanın amacı, mevcut veri setinde yer alan değişkenler ile yolcuların Titanik felaketinden sağ kurtulmaları arasındaki ilişkiyi tespit etmektir. Ekonomik ve sosyal statü, cinsiyet, yaş gibi niteliklerin yolcuların hayatta kalmaları üzerinde etkileri bulunup bulunmadığı, bulunuyorsa nasıl ve ne şekilde etkiledikleri sorularına yanıt bulmak amaçlanmaktadır. Titanik, araştırmacılara yarı doğal bir deney alanı sunması bakımından da oldukça önemlidir.[@frey2009surviving]
+
+## Literatür 
+@frey2011perished hayatta kalanların bireysel ve sosyal niteliklerini incelediği ampirik bir analiz gerçekleştirmiş, tıpkı makine öğrenimi algoritmalarını kullanarak analiz yapan @kakde2018predicting gibi cinsiyetin hayatta kalma oranı üzerinde belirleyici etkisi bulunduğu, gemiden daha fazla kadının kurtulduğu ve fiziksel gücün hayatta kalma ile bir ilişkisi bulunmadığı sonucuna ulaşmıştır. @dasgupta2021predicting de diğer araştırmacılar gibi cinsiyetin, yaşın ve ekonomik sınıfın haaytta kalma oranı üzerindeki etkisini analiz ederek 18-30 yaş arası yolcular ile ekonomik durumu daha iyi olan 1.sınıfta seyahat eden yolcuların daha büyük olasılıkla kurtulduğunu tespit etmiş, birlikte seyahatlerde 0-3 kişiye kadar bu durumun hayatta kalmaya olumlu etkisi olduğu hususunda @kakde2018predicting ile aynı görüşü sunmuştur. @frey2009surviving, Titanik felaketini ekonomik, sosyal ve doğal faktörler bakımından ele alarak milliyeti de göz önünde tutmuş, davranışsal ekonomi, psikolojik ve sosyal eğilimlerin üzerinde durmuş, @frey2011perished ile benzer şekilde yüksek gelirin hayatta kalma oranını etkileyen olumlu bir değişken olduğunu, milliyetin ise İngiliz centilmenliği yansıtılsa da belirleyici bir etkisinin bulunmadığını ifade etmiştir. @gleicher2004survived de yaş, cinsiyet ve sınıf değişkenlerini lojistik regresyon analizi ile tek tek ve birlikte değerlendirerek karmaşık sınıf faktörleri içinde kadın ve çocukların kurtarıldığı, @frey2011perished gibi, önceliğin de doğurganlık çağındaki kadınlarda olduğu bulgularını edinmiştir. Literatürde, çeşitli istatistiksel metodoloji ve analiz teknikleri kullanılarak elde edilen sonuçlar ile Titanik felaketinden sağ kurtulan yolcuların temelde fazla finansal kaynağa sahip olan, genç-orta yaşlı, öncelikle kadın ve çocuklar oldukları üzerinde ortak bir kanıya varılmıştır.
+
+# Veri 
+Çalışmada kullanılmak üzere erişilmiş olan veri seti, Noah Rippner tarafından geliştirilen _Titanik Disaster Dataset_, [data.world](https://data.world/nrippner/titanic-disaster-dataset) web sitesinden elde edilmiş olup CSV (Comma Separated Values) dosya biçimindedir. 1309 gözlem ve 14 değişkenden oluşan veri setinden, araştırmaya katkı sağlamayacak olan "body" ve "boat" sütunları ile *NA* gözlemler içeren satırlar çıkarılarak 239 gözlem ve 12 değişkenden oluşan bir veri seti elde edilmiştir. Veri setinin bağımlı değişkeni olan *survived* değişkeni ile analizde öncelikle incelenecek olan bağımsız değişkenler veri setinin ilk sütunlarına alınmıştır. Ayrıca "age" değişkenine ait verilerin türü *integer*, "survived" değişkenine ait verilerin türü *logical*, "embarked", "sex" ve "pclass" değişkenlerine ait verilerin türleri de *factor* olarak değiştirilmiştir.
+
+```{r, echo=FALSE}
+
+library(tidyverse)
+library(here)
+titanic <- readr::read_csv(here("data/titanic.csv"))
+
+```
+
+```{r, echo=FALSE}
+
+titanic <- subset(titanic, select = -boat)
+titanic <- subset(titanic, select = -body)
+
+```
+
+```{r, echo=FALSE}
+
+library(conflicted)
+conflicted::conflicts_prefer(dplyr::filter)
+titanic <- titanic %>% filter(if_all(everything(), ~!is.na(.)))
+
+```
+
+```{r, echo=FALSE}
+
+library(dplyr)
+titanic <- titanic %>% select(survived, sex, age, pclass, fare, sibsp, parch, ticket, cabin, embarked, name, home.dest)
+
+```
+
+```{r, echo=FALSE}
+
+titanic$survived <- as.logical(titanic$survived)
+titanic$sex <- as.factor(titanic$sex)
+titanic$age <- as.integer(titanic$age)
+titanic$pclass <- as.factor(titanic$pclass)
+titanic$embarked <- as.factor(titanic$embarked)
+
+```
+
+```{r results='asis', echo=FALSE}
+
+library(knitr)
+library(kableExtra)
+library(tibble)
+
+Tablo.1 <- tibble(
+  Değişkenler = c("survived","pclass", "fare", "sex", "age", "name", "sibsp", "parch", "ticket", "cabin", "embarked", "home.dest"),
+  Türü = c("logical", "factor", "numeric", "factor", "integer", "character", "numeric", "numeric", "character", "character", "factor", "character"),
+  Açıklamalar = c("Hayatta Kalma (TRUE/FALSE)", "Yolcu Sınıfı (1 = 1st; 2 = 2nd; 3 = 3rd)", "Bilet Fiyatı", "Cinsiyet", "Yaş", "Yolcuların İsimleri", "Gemideki Kardeş/Eş Sayısı", "Gemideki Ebeveyn/Çocuk Sayısı", "Bilet Numarası", "Kabin Numarası", "Bindirme Limanı (C= Cherbourg; Q= Queenstown; S= Southampton)", "Varış Yeri"))
+
+Tablo.1 %>%
+  kable(format = "markdown", caption = "Veri Seti Değişkenleri ve Açıklamaları", align = "l", label = "Tablo1") %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>%
+  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+
+```
+
+```{r, echo=FALSE, include = FALSE}
+
+library(tidyverse)
+library(skimr)
+
+titanic <- tibble::as_tibble(titanic)
+glimpse(titanic)
+titanic.summary <- skimr::skim_without_charts(titanic)
+print(titanic.summary)
+
+```
+
+```{r, echo=FALSE}
+
+library(xtable) 
+# devtools::install_github("emraher/summarytools")
+library(summarytools)
+st_options(lang = "tr")
+
+```
+
+Bu çalışmada incelenecek olan veri setindeki değişkenlere ait özet istatistik tabloları aşağıda yer almaktadır.
+
+```{r results='asis', echo=FALSE}
+
+Tablo.2 <- titanic %>%
+  select("fare", "age", "sibsp", "parch") %>% 
+  descr(stats = c("mean", "sd", "min", "med", "max"), na.rm = TRUE, transpose = TRUE) %>%
+  xtable(format = "markdown", caption = "Sayısal Veriler İçin Özet İstatistikler",
+         align = c("l", "l", "l", "l", "l", "l"), label = "Tablo2") %>%
+  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+
+```
+
+Sayısal verilere ilişkin özet istatistiklerde, Titanik gemisinde bulunan yolcuların hayatta kalmaları üzerindeki etkilerinin tespiti amaçlanan yaş değişkeninin ortalamasının 38.04 olduğu, yolculardan en küçüğünün 0 en büyüğünün 80 yaşında olduğu; bilet fiyatı değişkeninin ortalamasının 84.39, minimum bilet fiyatının 0, maksimum bilet fiyatının ise 512.33 birim para olduğu, bilet fiyatlarının ortalamaya göre çok daha fazla değişkenlik gösterdiği gözlemlenmektedir.
+
+```{r results='asis', echo=FALSE}
+
+library(gtsummary)
+library(knitr)
+library(kableExtra)
+
+Tablo.3 <- titanic %>%
+  select("survived", "sex", "pclass", "embarked") %>%
+  gtsummary::tbl_summary() %>%
+  modify_table_body(
+    ~.x %>%
+      mutate(across(everything(), ~ifelse(is.na(.), " ", as.character(.))))
+  ) %>%
+  kable(format = "markdown", caption = "Sayısal Olmayan Veriler İçin Özet İstatistikler", label = "Tablo3") %>%
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>%
+  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+
+```
+
+Sayısal olmayan verilere ilişkin özet istatistiklere dayanarak Titanic gemisinde bulunan toplam 239 kişiden 158'inin hayatta kaldığı ve hayatta kalma oranının %66 olduğu, yolculardan %47'sinin kadın (113 kişi), %53'ünün erkek (126 kişi) olduğu, 218 kişinin 1.sınıfta, 20 kişinin 2.sınıfta ve 1 kişinin 3.sınıfta seyahat ettiği tespit edilmiştir.
+
+# Yöntem ve Veri Analizi
+Titanik kazasından kurtulmayı başararak hayatta kalabilen insanların yaş, cinsiyet ve ekonomik durumları ile hayatta kalmış olmaları arasındaki ilişkiyi test etmek için mevcut veri setindeki ilgili bağımsız değişkenler üzerinde birtakım istatistiksel testler ve grafiksel görselleştirmeler yapılmıştır.
+
+## Yolcuların Yaşlarının Hayatta Kalmaları Üzerindeki Etkisi
+```{r, echo=FALSE, include = FALSE}
+
+shapiro.test(titanic$age)
+
+```
+
+```{r, echo=FALSE, include = FALSE}
+
+hist(titanic$age)
+
+boxplot(titanic$age)
+
+age.density <- density(titanic$age) %>%
+  plot()
+
+qqnorm(titanic$age)
+
+qqline(titanic$age)
+
+```
+
+İlk olarak Titanik'ten sağ kurtulabilen yolcuların yaşını temsil eden "age" değişkeni üzerinde yapılan _"Shapiro-Wilk"_ testi ile elde edilen p değerinin 0.05'ten büyük olduğu tespit edilmiş ve bu nedenle değişkenin normal dağılıma uyduğunu gösteren boş hipotez kabul edilmiştir. Ayrıca yaş değişkeninin normal dağılıma uyduğu ve anlamlı bir farklılık göstermediği R üzerinde histogram, kutu, yoğunluk ve QQ grafikleri çizdirilerek doğrulanmıştır.
+
+```{r, echo=FALSE, include = FALSE}
+
+age.t.test<- t.test(titanic$age ~ titanic$survived)
+print(age.t.test)
+
+```
+
+```{r, echo=FALSE, include = FALSE}
+
+library(broom)
+age.anova <- aov(survived ~ age, data = titanic)
+print(summary(age.anova))
+
+```
+
+```{r, echo=FALSE, include = FALSE}
+
+age.cor <- cor(titanic$age, titanic$survived) %>%
+  print()
+
+age.cov <- cov(titanic$age, titanic$survived) %>%
+  print()
+
+```
+
+Titanik yolcularının yaşlarının felaketten sağ kurtulmaları üzerindeki etkisini saptamak için yapılan _"t-testi"_ sonucu elde edilen p değeri kabul edilen 0.05'ten oldukça küçük olduğundan boş hipotez reddilmiştir. _"Anova"_ testinden elde edilen p değerinin de kabul edilen 0.05'ten çok daha küçük olduğunun tespitiyle de aynı sonuca ulaşılmıştır. Dolayısıyla yaş değişkeni ile hayatta kalma durumu arasında istatistiksel olarak anlamlı bir ilişkiden söz edilebilir. Bu ilişkinin yönünü ve etki boyutunu belirleyebilmek için yapılan _"korelasyon"_ ve _"kovaryans"_ testlerinden elde edilen değerler negatif olduğundan ilişkinin ters yönlü olduğunu, yani yolcuların yaşları arttıkça hayatta kalma eğilimlerinin düştüğünü söylemek mümkündür. Ancak elde edilen değerlerin düşüklüğü söz konusu ilişkinin güçlü olmadığını göstermektedir.
+
+```{r, echo=FALSE, include = FALSE}
+
+titanic <- titanic %>%
+  mutate(age.group = cut(age, breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80), include.lowest = TRUE))
+
+age.group.counts <- titanic %>%
+  group_by(age.group) %>%
+  summarise(count = n()) %>%
+  print()
+
+age.group.summary <- titanic %>%
+  group_by(age.group) %>%
+  summarise(survived.count = sum(survived == 1),
+            total.count = n()) %>%
+  mutate(survival.rate = survived.count / total.count * 100) %>%
+  print()
+
+```
+
+Veri setindeki gözlemleri oluşturan 239 yolcu yaş gruplarına ayrılarak elde edilen sayısal veriler çerçevesinde aşağıdaki grafiklere ulaşılmıştır.
+
+```{r, echo=FALSE}
+
+library(ggplot2)
+library(patchwork)
+library(ggthemes)
+
+age.group.grafik <- ggplot(age.group.summary, aes(x = survival.rate, y = age.group, fill = age.group)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Survival Rate (%)", y = "Age Group", fill = "Age Group") +
+  scale_fill_brewer(palette = "Set3") +
+  theme_calc()
+age.group.grafik
+
+```
+
+Yaş gruplarına göre yolcuların hayatta kalma oranlarını gösteren bar grafiğinden de anlaşılacağı üzere yaş arttıkça hayatta kalma eğilimi düşmüş ve hayatta kalma oranları azalmıştır. Ancak bu azalış düzenli ve doğrusal olmadığından yaş ile hayatta kalma değişkenleri arasındaki ters yönlü ilişkinin zayıf olduğunu kanıtlamaktadır. Zira 40-50 yaş grubuna kadar yaş arttıkça hayatta kalma oranının doğrusal bir şekilde azaldığı gözlemlenebilirken ilerleyen yaş gruplarında düzensiz olarak artışlar ve azalışlar meydana gelmiştir.
+
+```{r, echo=FALSE}
+
+age.grafik <- titanic %>%
+  mutate(`Survival Status` = ifelse(survived == 1, "Survived", "Not Survived")) %>%
+  ggplot(aes(x = `Survival Status`, y = age, fill = `Survival Status`)) +
+  geom_boxplot(outlier.shape = NA, position = "dodge") +
+  labs(x = "Survival", y = "Age Range") +
+  scale_fill_manual(values = c("#8b658b", "#eedd82"), labels = c("Survived", "Not Survived")) +
+  theme_calc() +
+  theme(legend.position = "top") +
+  guides(fill = guide_legend(title.position = "top"))
+age.grafik
+
+```
+
+Yaş değişkenine ait medyan ve çeyrekler arası açıklığı da gösteren kutu grafiği ile gözlemlenen özet istatistikler, hayatta kalan yolcuların yaşlarının vefat eden yolcuların yaşlarından küçük olduğunu ortaya koymaktaysa da aşırı bir fark olmaması yine yolcuların yaşları ile hayatta kalmaları arasındaki negatif ilişkinin güçlü olmadığını doğrulamaktadır.
+
+## Yolcuların Cinsiyetlerinin Hayatta Kalmaları Üzerindeki Etkisi
+```{r, echo=FALSE, include = FALSE}
+
+gender.t.test<- t.test(titanic[titanic$sex == "male", "survived"],
+                        titanic[titanic$sex == "female", "survived"]) %>%
+  print()
+
+```
+
+Titanik yolcularının cinsiyetlerini temsil eden "sex" değişkeni, kategorik bir değişken olduğundan uygulanabilecek testler yaş değişkenine göre farklılık göstermektedir. Kategorik değişkenler arasındaki ilişkinin tespitine yarayan _"t-testi"_ nin yapılması ile ulaşılan 2.2e-16'dan küçük p değeri ile alternatif hipotez, istatistiksel olarak kadınlarla erkeklerin hayatta kalma oranları arasında anlamlı bir fark olduğunu, negatif t değeri de kadınların hayatta kalma oranlarının erkeklere göre anlamlı bir şekilde fazla olduğunu ortaya koymuştur. Dolayısıyla cinsiyetin hayatta kalma durumunu fazlasıyla etkilediğini söylemek mümkündür.
+
+```{r, echo=FALSE, include = FALSE}
+
+gender.chisq.test <- chisq.test(titanic$survived, titanic$sex) %>%
+  print()
+
+```
+
+Yine iki kategorik değişken arasındaki ilişkinin tespitinde kullanılan _"ki-kare"_ testinin uygulanması sonucunda elde edilen ki-kare istatistiği ve p değerinin kabul edilen 2.2e-16 değerinden küçük olması gereğince cinsiyet ve hayatta kalma durumu arasında istatistiksel olarak anlamlı bir ilişki olduğu, cinsiyetin yolcuların hayatta kalmaları üzerinde belirleyici bir faktör olduğu gözlemlenmiştir. Testin sonuçlarından biri olan ve istatistiksel güvenilirliği etkileyen serbestlik derecesi ise 1 olarak hesaplanmış olup bu durum veri sayısından kaynaklanmaktadır. Veri sayısı arttıkça daha yüksek serbestlik derecesi elde edilir ve sonuçların güvenilirliği artar.
+
+```{r, echo=FALSE, include = FALSE}
+
+gender.counts <- table(titanic$sex)
+print(gender.counts)
+
+total.female.passenger <- sum(titanic$sex == "female")
+total.male.passenger <- sum(titanic$sex == "male")
+survived.female <- sum(titanic$sex == "female" & titanic$survived == 1)
+survived.male <- sum(titanic$sex == "male" & titanic$survived == 1)
+not.survived.female <- sum(titanic$sex == "female" & titanic$survived == 0)
+not.survived.male <- sum(titanic$sex == "male" & titanic$survived == 0)
+
+```
+
+Veri setindeki toplam 113 kadın ve 126 erkek yolcuya ilişkin olarak hayatta kalma durumuna göre yapılan gruplandırmanın ardından sayısal veriler ışığında aşağıdaki grafikler elde edilmiştir.
+
+```{r, echo=FALSE}
+
+library(ggplot2)
+library(ggthemes)
+library(gridExtra)
+ 
+gender.data.1 <- data.frame(
+Gender = c("Female", "Male", "Female", "Male"),
+Status = c("Survived", "Survived", "Not Survived", "Not Survived"),
+Number = c(survived.female, survived.male, not.survived.female, not.survived.male))
+
+gender.grafik.1 <- gender.data.1 %>%
+ggplot(aes(x = Status, y = Number, fill = Gender)) +
+geom_bar(stat = "identity", position = "stack", width = 0.5) +
+geom_text(aes(label = Number), position = position_stack(vjust = 0.5), color = "black", size = 3) +
+labs(x = "Survival", y = "Passengers") +
+scale_fill_manual(values = c("#ffa07a", "#6ca6cd"), labels = c("Female", "Male")) +
+theme_calc()
+gender.grafik.1
+
+```
+
+```{r, echo=FALSE}
+
+gender.data.2 <- gender.data.1 %>%
+group_by(Status) %>%
+mutate(Rate = (Number / sum(Number)) * 100)
+gender.grafik.2 <- gender.data.2 %>%
+ggplot(aes(x = Status, y = Rate, fill = Gender)) +
+geom_bar(stat = "identity", position = "stack", width = 0.7) +
+geom_text(aes(label = paste0(round(Rate), "%")), position = position_stack(vjust = 0.5), color = "white", size = 3) +
+labs(x = "Survival", y = "Rate") +
+scale_fill_manual(values = c("#cd8162", "#4a708b"), labels = c("Female", "Male")) +
+theme_calc()
+gender.grafik.2
+
+```
+
+Toplam 239 yolcu içinde Titanik'ten sağ kurtulabilen 158 yolcunun %68'ine tekabül eden 107 kadın yolcu ile %32'sine tekabül eden 51 erkek yolcu olduğu bilgilerini içeren mevcut sayısal veriler, cinsiyet değişkeninin yolcuların hayatta kalma durumları üzerindeki etkisinin tespiti için yapılan t-testi ve ki-kare testi sonucu saptanan tesadüfi olmayan ve anlamlı istatistiksel ilişkinin varlığını, kadınların hayatta kalma oranlarının erkeklere göre anlamlı bir şekilde fazla olduğunu kanıtlamakta ve bu husus yukarıda grafiklerle de açıkça gözlemlenebilmektedir.
+
+## Yolcuların Ekonomik Durumlarının Hayatta Kalmaları Üzerindeki Etkisi
+Titanik gemisindeki yolcu sınıflarını temsil eden "pclass" değişkeni ve bilet fiyatlarını temsil eden "fare" değişkeni yolcuların ekonomik durumları hakkında bilgi vermektedir.
+
+```{r, echo=FALSE, include=FALSE}
+
+economic.group <- titanic %>%
+  select(pclass, fare) %>%
+  print()
+
+economic.group$pclass <- as.numeric(as.character(economic.group$pclass))
+
+pclass.fare.cor <- cor(economic.group$pclass, economic.group$fare) %>%
+  print()
+
+pclass.fare_cov <- cov(economic.group$pclass, economic.group$fare) %>%
+  print()
+
+```
+
+Öncelikle bilet fiyatı ile yolcu sınıfı arasındaki ilişkinin tespiti için pclass değişkeni sayısal bir değişkene dönüştürülerek _"korelasyon"_ ve _"kovaryans"_ testleri yapılmıştır. Bu testler sonucunda elde edilen negatif değerlerle yolcu sınıfı ile bilet fiyatı arasındaki ilişkinin ters yönlü zayıf bir ilişki olduğu tespit edilmiştir. Yani 1.sınıfta seyahat etmek için ödenen bilet fiyatı 3. sınıfta seyahat etmek için ödenen bilet fiyatından fazladır. Aşağıda yer alan nokta grafiği ile yolcu sınıflarına ilişkin bilet fiyatları ve 1.sınıftan 3.sınıfa doğru gidildikçe bilet fiyatlarındaki doğrusal azalma görselleştirilmiştir. 
+
+```{r, echo=FALSE}
+
+library(ggplot2)
+
+ggplot(economic.group, aes(x = factor(pclass), y = fare)) +
+  geom_point(shape=24, fill="#b22222", color="#f08080", size=3) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+  labs(x = "Pclass", y = "Ticket Fare") +
+  theme_calc() +
+  scale_x_discrete(labels = c("1" = "1", "2" = "2", "3" = "3"))
+
+```
+
+```{r, echo=FALSE, include=FALSE}
+
+fare.group.1 <- titanic[titanic$pclass == 1, "fare"]
+fare.group.1 <- fare.group.1[!is.na(fare.group.1)]
+
+fare.group.2 <- titanic[titanic$pclass == 2, "fare"]
+fare.group.2 <- fare.group.2[!is.na(fare.group.2)]
+
+fare.group.3 <- titanic[titanic$pclass == 3, "fare"]
+fare.group.3 <- fare.group.3[!is.na(fare.group.3)]
+
+fare.kruskal.test <- kruskal.test(list(fare.group.1, fare.group.2, fare.group.3))
+print(fare.kruskal.test)
+
+```
+
+Ardından yapılan _"Kruskal Wallis"_ testi ile oldukça küçük bir değere sahip olduğu anlaşılan p değeri, farklı yolcu sınıfları için ödenen bilet fiyatları arasındaki farkın rastgele bir varyasyondan kaynaklanmadığını, bu iki değişken arasında istatistiksel olarak anlamlı bir ilişki olduğunu ortaya koymuştur. Ancak her ne kadar yolcu sınıfı ile bilet fiyatı arasındaki ilişki tespit edilmiş olsa da yolcuların Titanik'ten sağ kurtulmaları ile seyahat ettikleri yolcu sınıfı arasındaki ilişki, dolayısıyla ekonomik durumlarının hayatta kalmaları üzerindeki etkisi belirlenememiştir. Zira mevcut veri setinde 3.sınıfta bulunan yolcu sayısı 1 olduğundan yolcuların seyahat ettikleri sınıfın hayatta kalmaları üzerindeki etkisinin istatistiksel olarak tespiti gözlem yetersizliği sebebiyle mümkün olmamıştır.
+
+```{r, echo=FALSE, include=FALSE}
+
+library(vcd)
+
+pclass.chisq.test <- chisq.test(titanic$survived, titanic$pclass) %>%
+  print()
+
+```
+
+Ayrıca yolcu sınıfı değişkeni ve hayatta kalma durumu arasındaki ilişkinin tespiti için yapılan _"ki-kare"_ testinden elde edilen ki-kare değeri ve 0.05'ten büyük olan p değeri ile istatistiksel olarak anlamlı bir ilişkinin bulunmadığı, yolcuların hangi yolcu sınıfında bulunduğunun hayatta kalmaları üzerinde belirleyici bir faktör olmadığı sonucuna ulaşılmıştır. 
+
+```{r, echo=FALSE, include=FALSE}
+
+pclass.fisher.test <- fisher.test(table(titanic$survived, titanic$pclass)) %>%
+  print()
+
+```
+
+Ki-kare testinin tam olarak uygun olmayabileceği durumu göz önünde bulundurularak yapılan _"Fisher Testi"_ ile de p değeri kabul edilen değer olan 0.05'ten büyük olduğundan yolcu sınıfı ile hayatta kalma durumu arasında istatistiksel açıdan anlamlı bir ilişki olmadığı sonucuna varılarak ki-kare testinin sonucu teyit edilmiştir. Hem veri setindeki gözlem yetersizliği hem de değişkenler arasında anlamlı istatistiksel bir ilişki bulunmaması, yolcu sınıfının dolayısıyla ekonomik durumun yolcuların hayatta kalmaları üzerindeki etkisinin tespit edilememesine yol açmıştır.
+
+## Değişkenlerin Etkilerinin Birlikte Değerlendirilmesi
+```{r, echo=FALSE, include=FALSE}
+
+titanic$gender.dummy <- ifelse(titanic$sex == "female", 1, 0)
+
+regresyon.modeli <- glm(survived ~ age + gender.dummy, data = titanic, family = binomial)
+summary(regresyon.modeli)
+
+```
+
+Araştırmada kullanılan veri setindeki yolcuların hayatta kalmalarında cinsiyet ve yaş değişkenlerinin belirleyici faktörler oldukları saptanmıştır. Bu bağlamda söz konusu değişkenlerin birlikte değerlendirilmesi adına yapılan *"lojistik regresyon analizi"* ile elde edilen sonuçlara göre:
+
+* Yaş arttıkça hayatta kalma olasılığının azaldığı söylenebilir.
+* Cinsiyet hayatta kalma olasılığı üzerinde güçlü bir etkiye sahiptir. Kadınların hayatta kalma oranları erkeklerin hayatta kalma oranlarından ciddi ölçüde fazladır.
+* Her iki değişken için de hesaplanan p değeri 0.05'ten küçük olduğundan bu değişkenler hayatta kalma üzerinde istatistiksel olarak anlamlı bir etkiye sahiptir.
+* Model bağımsız değişkenlere iyi uyum sağlamakta ve verilerdeki değişkenliği açıklamada etkili görülmektedir.
+
+Regresyon denklemi ise aşağıdaki gibidir:
+$$
+survived = 1.06958 - 0.03737 * age + 3.30833 * gender.dummy + ε
+$$
+
+# Sonuç
+Geliştiricisi Noah Rippner olan ve [data.world](https://data.world/nrippner/titanic-disaster-dataset) isimli web sitesinden elde edilen 1309 gözlem ve 14 değişkenli _Titanik Disaster Dataset_ üzerinde analiz için gerekli şartları sağlayacak şekilde veri temizliği yapılmış, elde edilen 239 gözlem ve 12 değişkenli mevcut veri seti ile bu çalışma gerçekleştirilmiştir. Titanik felaketi sonrası gemiden sağ kurtulan yolcularının yaş, cinsiyet ve ekonomik durum değişkenlerine ait ortak ve farklı niteliklerin incelenmesi yoluyla yanıtlanması hedeflenen _"niteliklerin yolcuların hayatta kalmalarına etkisi olup olmadığı ve varsa nasıl bir etkisi olduğu"_ sorusuna ilişkin olarak yapılan istatistiksel testler ve elde edilen grafiklerle, yolcuların yaşları arttıkça hayatta kalma eğilimlerinin düştüğü, anlamlı bir negatif istatistiksel ilişki mevcutsa da bu ilişkinin düzenli ve doğrusal olmayışı dolayısıyla zayıf bir ilişki olduğu sonucuna varılmıştır. Ayrıca hayatta kalma durumu üzerinde belirleyici bir faktör olduğu tespit edilen cinsiyet değişkeninin güçlü etkisinin kadınların hayatta kalma oranlarıyla erkeklerin hayatta kalma oranları arasında ciddi bir fark oluşturduğu, kadınların erkeklerden daha fazla hayatta kaldığı saptanmıştır. Yolcuların ekonomik durumlarını ölçümlemeye yarayan yolcu sınıfı ve bilet fiyatı değişkenlerinin ise eldeki bulgular bakımından hayatta kalma durumu ile anlamlı bir istatistiksel ilişki ortaya koyamamış olması ve gözlem sayısının ilişkiyi değerlendirmede yetersiz kalması sebebiyle ekonomik durumun etkisine ilişkin herhangi bir sonuca ulaşılamamıştır. Regresyon Analizi ile de yaş ve cinsiyet değişkenlerinin hayatta kalma durumu üzerinde anlamlı etkiye sahip olduğu, modelin bağımsız değişkenlere iyi uyum sağlayarak verilerdeki değişkenleri açıklamada etkili olduğu görülmüştür. Bu çalışma, mevcut veri setinde yer alan dört değişkenin etkisinin irdelenmesiyle gerçekleştirilmiş olup analize konu değişken sayısı arttırılarak, bağımlı hayatta kalma değişkeni ile ilişkisi tespit edilen bağımsız değişkenlerin diğer değişkenlerle birlikte etkisi tespit edilebilir ve analizin geliştirilmesiyle daha detaylı sonuçlara ulaşılabilir.
+
+\newpage
+# Kaynakça {#references}
+<div id="refs"></div>
+
